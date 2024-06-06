@@ -1,57 +1,75 @@
-{ stdenv, lib, pkgs }:
+{
+  stdenv,
+  lib,
+  fetchurl,
+  makeWrapper,
+  mpv,
+  youtube-dl,
+  rofi,
+}:
 ############
 # Packages #
 #######################################################################
-let 
-  pname = "rofi-beats";
+let
   iconPath = "icon.png";
   name = "Rofi Beats";
   comment = "Rofi music player";
-  # ----------------------------------------------------------------- #
-in stdenv.mkDerivation (finalAttrs: {
-  pname = pname;
+in
+# ----------------------------------------------------------------- #
+stdenv.mkDerivation (finalAttrs: {
+  pname = "rofi-beats";
   version = "unstable-06-06-2024";
   # ----------------------------------------------------------------- #
-  src = pkgs.fetchurl {
+  src = fetchurl {
     url = "https://github.com/NixAchu/rofi-beats/releases/download/1.0.0/rofi-beats.tar.gz";
-    sha256 = "b7a08aa5fbb3a999a61265bf069352847dbe6c240802881b9c40605dd8d562f2";
+    hash = "sha256-t6CKpfuzqZmmEmW/BpNShH2+bCQIAogbnEBgXdjVYvI=";
   };
   sourceRoot = ".";
   # ----------------------------------------------------------------- #
-  buildInputs = with pkgs; [
-    mpv
-    youtube-dl
-  ];
+  nativeBuildInputs = [ makeWrapper ];
+  # ----------------------------------------------------------------- #
+  prePatch = ''
+    patchShebangs . ;
+
+    substituteInPlace rofi-beats \
+      --replace-fail "play-music \"" "${placeholder "out"}/bin/play-music \""
+  '';
   # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
-    mkdir -p $out/bin/
 
-    echo "#! ${stdenv.shell}" >> $out/bin/${pname}
-    tail -n +2 ./${pname} >> $out/bin/${pname}
-    echo "#! ${stdenv.shell}" >> $out/bin/play-music
-    tail -n +2 ./play-music >> $out/bin/play-music
+    mkdir -p $out/bin/ $out/Applications/
+    cp -r ./ $out/Applications/${finalAttrs.pname}/
+
+    install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
+    install -Dm 755 play-music $out/bin/play-music
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
       "Name=${name}\n" \
       "Comment=${comment}\n" \
-      "Icon=$out/Applications/${pname}/${iconPath}\n" \
-      "Exec=$out/bin/${pname}\n" \
-      "Terminal=false" > ./${pname}.desktop
+      "Icon=$out/Applications/${finalAttrs.pname}/${iconPath}\n" \
+      "Exec=$out/bin/${finalAttrs.pname}\n" \
+      "Terminal=false" > ./${finalAttrs.pname}.desktop
 
-    install -D --target-directory=$out/share/applications/ \
-      ${pname}.desktop
+    install -D ${finalAttrs.pname}.desktop \
+      $out/share/applications/${finalAttrs.pname}.desktop
 
     runHook postInstall
   '';
   # ----------------------------------------------------------------- #
-  meta = with lib; {
+  postFixup = ''
+    wrapProgram $out/bin/play-music \
+      --prefix PATH : ${lib.makeBinPath [ mpv youtube-dl rofi ]}
+  '';
+  # ----------------------------------------------------------------- #
+  meta = {
     description = comment;
     homepage = "https://github.com/NixAchu/rofi-beats";
-    maintainers = [ maintainers.pikatsuto ];
-    licenses = licenses.gpl2;
-    platforms = platforms.linux;
+    maintainers = with lib.maintainers; [ pikatsuto ];
+    licenses = lib.licenses.gpl3Plus;
+    platforms = lib.platforms.linux;
+    mainProgram = "rofi-beats";
   };
-#######################################################################
+  #######################################################################
 })
