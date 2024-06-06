@@ -1,7 +1,6 @@
 {
   stdenv,
   lib,
-  fetchurl,
   makeWrapper,
   mpv,
   youtube-dl,
