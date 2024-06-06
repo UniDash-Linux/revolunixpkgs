@@ -3,7 +3,6 @@
   lib,
   makeWrapper,
   rofi,
-  hyprland
 }:
 ############
 # Packages #
@@ -50,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.pname} \
-      --prefix PATH : ${lib.makeBinPath [ rofi hyprland ]}
+      --prefix PATH : ${lib.makeBinPath [ rofi ]}
   '';
   # ----------------------------------------------------------------- #
   meta = {
