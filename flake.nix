@@ -15,6 +15,11 @@
       nixpkgs.lib.genAttrs defaultSystems
       (system: function nixpkgs.legacyPackages.${system});
     in {
+      nixosModules = {
+        auto-passthrough = import ./modules/auto-passthrough.nix;
+        default = self.nixosModules.auto-passthrough;
+      };
+
       overlays.default = (final: prev:
         (self.packages.${prev.stdenv.hostPlatform.system}));
 
