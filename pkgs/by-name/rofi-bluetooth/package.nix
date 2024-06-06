@@ -2,7 +2,7 @@
   stdenv,
   lib,
   makeWrapper,
-  rofi,
+  rofi-wayland,
 }:
 ############
 # Packages #
@@ -49,7 +49,7 @@ stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.pname} \
-      --prefix PATH : ${lib.makeBinPath [ rofi ]}
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland ]}
   '';
   # ----------------------------------------------------------------- #
   meta = {

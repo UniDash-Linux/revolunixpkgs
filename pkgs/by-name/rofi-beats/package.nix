@@ -4,7 +4,7 @@
   makeWrapper,
   mpv,
   youtube-dl,
-  rofi,
+  rofi-wayland,
 }:
 ############
 # Packages #
@@ -55,7 +55,11 @@ stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   postFixup = ''
     wrapProgram $out/bin/play-music \
-      --prefix PATH : ${lib.makeBinPath [ mpv youtube-dl rofi ]}
+      --prefix PATH : ${lib.makeBinPath [
+        mpv
+        youtube-dl
+        rofi-wayland
+      ]}
   '';
   # ----------------------------------------------------------------- #
   meta = {
