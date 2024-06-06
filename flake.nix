@@ -17,7 +17,7 @@
     in {
       overlays.default = (final: prev: {
         inherit (self.packages.${prev.system})
-          citra rofi-beats;
+          citra rofi-beats rofi-bluetooth;
       });
 
       packages = forAllSystems (pkgs:
