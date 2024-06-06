@@ -8,7 +8,9 @@ in {
     virtualization.libvirtd.vms = with types; listOf(submodule {
       options = {
         name = mkOption {
+          description = "the name of the vm";
           type = types.str;
+          default = "default";
         };
 
         os = mkOption {
