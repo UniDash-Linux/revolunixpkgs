@@ -18,7 +18,7 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-beats";
-  version = "unstable-06-06-2024";
+  version = "24.05-06-06-2024";
   # ----------------------------------------------------------------- #
   src = fetchurl {
     url = "https://github.com/NixAchu/rofi-beats/releases/download/1.0.0/rofi-beats.tar.gz";
