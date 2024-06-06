@@ -15,10 +15,8 @@
       nixpkgs.lib.genAttrs defaultSystems
       (system: function nixpkgs.legacyPackages.${system});
     in {
-      overlays.default = (final: prev: {
-        inherit (self.packages.${prev.system})
-          citra rofi-beats rofi-bluetooth;
-      });
+      overlays.default = (final: prev:
+        (self.packages.${prev.stdenv.hostPlatform.system}));
 
       packages = forAllSystems (pkgs:
         let
