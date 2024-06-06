@@ -10,12 +10,13 @@ let
   # ----------------------------------------------------------------- #
 in stdenv.mkDerivation (finalAttrs: {
   pname = pname;
-  version = "unstable-2023-07-16";
+  version = "unstable-06-06-2024";
   # ----------------------------------------------------------------- #
   src = pkgs.fetchurl {
     url = "https://github.com/NixAchu/rofi-beats/releases/download/1.0.0/rofi-beats.tar.gz";
     sha256 = "b7a08aa5fbb3a999a61265bf069352847dbe6c240802881b9c40605dd8d562f2";
   };
+  sourceRoot = ".";
   # ----------------------------------------------------------------- #
   buildInputs = with pkgs; [
     mpv
@@ -24,6 +25,7 @@ in stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
+    mkdir -p $out/bin/
 
     echo "#! ${stdenv.shell}" >> $out/bin/${pname}
     tail -n +2 ./${pname} >> $out/bin/${pname}

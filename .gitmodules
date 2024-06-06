@@ -1,0 +1,3 @@
+[submodule "pkgs/by-name/rofi-beats"]
+	path = pkgs/by-name/rofi-beats
+	url = https://github.com/NixAchu/rofi-beats
