@@ -27,7 +27,6 @@ stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   meta = {
     description = "Rofi focus fixer";
-    homepage = "https://github.com/nickclyde/rofi-bluetooth";
     maintainers = with lib.maintainers; [ pikatsuto ];
     licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
