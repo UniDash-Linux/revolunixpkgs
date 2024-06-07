@@ -1,0 +1,267 @@
+#!/usr/bin/env sh
+
+source ${HOME}/.config/backup-cli.sh
+
+SSH_USER="gabriel"
+LOCAL_UID=$(id -u)
+LOCAL_GID=$(id -g)
+
+LOCAL_SYNC_PATH="${HOME}/SYNC/"
+LOCAL_SHARE_PATH="${HOME}/SHARE/"
+SFTP_SHARE_PATH="./SHARE/"
+
+SSHFS_LOCAL_CONNECTION_STRING="${SSH_USER}@${LOCAL_IP}:${SFTP_SHARE_PATH}"
+SSHFS_NET_CONNECTION_STRING="${SSH_USER}@${NET_DOMAINE}:${SFTP_SHARE_PATH}"
+SSHFS_OPTIONS_STRING="-o allow_other,default_permissions,IdentityFile=${HOME}/.ssh/id_ed25519"
+
+pipe_test() {
+  if [ "${2}x" != "x" ]; then
+    echo "${2}" | ${1}
+  else
+    ${1}
+  fi
+}
+
+replace_sapce() {
+  replace() {
+    sed 's/ /___/g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+reverse_space() {
+  replace() {
+    sed 's/___/ /g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+drop_line() {
+  replace() {
+    sed 's/ /\n/g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+format() {
+  if [ "${1}x" != "x" ]; then
+    drop_line "$(${1} | replace_sapce)" | reverse_space
+  else
+    echo "Error: Need a 1 arg."
+  fi
+}
+
+run_rofi() {
+  echo -e "${1}" \
+    | rofi -theme-str "textbox-prompt-colon {str: \"${ICON}\";}" \
+      -dmenu \
+      -p "${PROMPT}" \
+      -mesg "${MSG}" \
+      -markup-rows
+}
+
+ping_check() {
+  check() {
+    VALIDATION=false
+
+    if [ "${1}x" != "x" ]; then
+      PING_TEST="$(
+        ping -c 1 ${1} 2> /dev/null \
+          | grep reçus \
+          | cut -d " " -f 3
+      )"
+
+      [ "${PING_TEST}x" == "1x" ] \
+        && VALIDATION=true
+    fi
+
+    echo ${VALIDATION}
+  }
+
+  RUN=true
+  while ${RUN}; do
+    if [ "$(check ${LOCAL_IP})x" == "truex" ]; then
+      ${1}
+      RUN=false
+    elif [ "$(check ${NET_DOMAINE})x" == "truex" ]; then
+      ${2}
+      RUN=false
+    fi
+  done
+}
+
+mount_share() {
+  local_mount_command() {
+    sudo sshfs \
+      ${SSHFS_OPTIONS_STRING} \
+      ${SSHFS_LOCAL_CONNECTION_STRING} \
+      ${LOCAL_SHARE_PATH}
+  }; net_mount_command() {
+    sudo sshfs \
+      ${SSHFS_OPTIONS_STRING} \
+      ${SSHFS_NET_CONNECTION_STRING} \
+      ${LOCAL_SHARE_PATH}
+  }
+
+  IS_MOUNTED="$(
+    mountpoint ${LOCAL_SHARE_PATH} 2> /dev/null \
+      | grep "est un point de montage"
+  )"
+
+  [ -d ${LOCAL_SHARE_PATH} ] \
+    || mkdir -p ${LOCAL_SHARE_PATH}
+  [ -d ${LOCAL_SYNC_PATH} ] \
+    || mkdir -p ${LOCAL_SYNC_PATH}
+  [ "${IS_MOUNTED}x" == "x" ] \
+    && ping_check "local_mount_command" "net_mount_command"
+}
+
+full_check() {
+  mount_share
+  ping_check ${1} ${2}
+}
+
+push() {
+  ARGS=""
+  [ "${1}x" == "-dx" ] && \
+    ARGS="--delete-after"
+  [ "${1}x" == "-sdx" ] && \
+    ARGS="--delete-after --dry-run"
+
+  local_push_command() {
+    rsync -e ssh -aurtvP ${ARGS} \
+      ${LOCAL_SYNC_PATH} \
+      ${SSHFS_LOCAL_CONNECTION_STRING}
+  }; net_push_command() {
+    rsync -e ssh -aurtvPz ${ARGS} \
+      ${LOCAL_SYNC_PATH} \
+      ${SSHFS_NET_CONNECTION_STRING}
+  }
+
+  if [ "${1}x" == "-sdx" ]; then
+    PROMPT="Push"
+    MSG="Confirm deleted SHARE files"
+    ICON=""
+
+    get_deleted_files() {
+      full_check "local_push_command" "net_push_command" \
+        | grep "deleting" \
+        | sed 's/deleting //g'
+    }
+    
+    DELETED_FILES=""
+    if [ "$(get_deleted_files)x" != "x" ]; then
+      DELETED_FILES="$(format "get_deleted_files")"
+      DELETED_FILES=" RESTORE\n DELETE\n${DELETED_FILES::-1}"
+    fi
+    FILE="aaa"
+    while [[ "${DELETED_FILES}x" != "x" && "${FILE}x" != "x" ]]; do
+      FILE=$(run_rofi "${DELETED_FILES}")
+
+      if [ "${FILE}x" == " RESTOREx" ]; then
+        pull
+      elif [ "${FILE}x" == " DELETEx" ]; then
+        push -d
+      fi
+      DELETED_FILES="$(get_deleted_files | replace_sapce)"
+    done
+
+    [ "${DELETED_FILES}x" == "x" ] && \
+      push
+
+  else
+    full_check "local_push_command" "net_push_command"
+  fi
+}
+
+pull() {
+  ARGS=""
+  [ "${1}x" == "-dx" ] && \
+    ARGS="--delete-after"
+  [ "${1}x" == "-sdx" ] && \
+    ARGS="--delete-after --dry-run"
+
+  local_pull_command() {
+    rsync -e ssh -aurtvP ${ARGS} \
+      ${SSHFS_LOCAL_CONNECTION_STRING} \
+      ${LOCAL_SYNC_PATH}
+  }; net_pull_command() {
+    rsync -e ssh -aurtvPz ${ARGS} \
+      ${SSHFS_NET_CONNECTION_STRING} \
+      ${LOCAL_SYNC_PATH}
+  }
+
+  if [ "${1}x" == "-sdx" ]; then
+    PROMPT="Pull"
+    MSG="Confirm deleted SYNC files"
+    ICON=""
+
+    get_deleted_files() {
+      full_check "local_pull_command" "net_pull_command" \
+        | grep "deleting" \
+        | sed 's/deleting //g'
+    }
+    
+    DELETED_FILES=""
+    if [ "$(get_deleted_files)x" != "x" ]; then
+      DELETED_FILES="$(format "get_deleted_files")"
+      DELETED_FILES=" RESTORE\n DELETE\n${DELETED_FILES::-2}"
+    fi
+    FILE="aaa"
+    while [[ "${DELETED_FILES}x" != "x" && "${FILE}x" != "x" ]]; do
+      FILE=$(run_rofi "${DELETED_FILES}")
+
+      if [ "${FILE}x" == " RESTOREx" ]; then
+        push
+      elif [ "${FILE}x" == " DELETEx" ]; then
+        pull -d
+      fi
+      DELETED_FILES="$(get_deleted_files | replace_sapce)"
+    done
+
+    [ "${DELETED_FILES}x" == "x" ] && \
+      push
+
+  else
+    full_check "local_pull_command" "net_pull_command"
+  fi
+}
+
+sync() {
+  push ${1}
+  pull ${1}
+}
+
+sync_loop() {
+  while true; do
+    sync ${1}
+    sleep 30
+  done
+}
+
+help() {
+  echo "
+Layout:
+  backup-cli <Command flag> [<Option flag>]
+
+Command falgs:
+  -h  help        (Give all commands)
+
+  -m  Mount share (Create and mount SHARE and SYNC folder)
+  -s  Sync        (Pull and push)
+  -sl Sync loop   (every 5m)
+  -p  Pull        (Pull)
+  -P  Push        (Push)
+
+Options flags:
+  -d  Delete      (With delete file)
+  -sd Safe delete (Is -d with confimation popup)
+  "
+}
+
+[ "${1}x" == "-mx" ] && mount_share
+[ "${1}x" == "-sx" ] && sync ${2}
+[ "${1}x" == "-slx" ] && sync_loop ${2}
+[ "${1}x" == "-px" ] && pull ${2}
+[ "${1}x" == "-Px" ] && push ${2}
+[ "${1}x" == "-hx" ] && help
