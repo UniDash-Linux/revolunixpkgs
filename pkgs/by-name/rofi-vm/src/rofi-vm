@@ -10,13 +10,10 @@ source "$HOME"/.config/rofi/applets/shared/theme.bash
 theme="$type/$style"
 
 # Theme Elements
-prompt='Screenshot'
-
-if [[ "$theme" == *'type-5'* ]]; then
-	list_col='1'
-	list_row='5'
-	win_width='520px'
-fi
+prompt='Vitrual Machine'
+list_col='1'
+list_row='5'
+win_width='520px'
 
 # Options
 layout=`cat ${theme} | grep 'USE_ICON' | cut -d'=' -f2`
@@ -32,15 +29,14 @@ IFS=', ' read -r -a VMS <<< "${options}"
 
 # Rofi CMD
 rofi_cmd() {
-  focus-rofi &
-	rofi -theme-str "window {width: $win_width;}" \
-		-theme-str "listview {columns: $list_col; lines: $list_row;}" \
-		-theme-str 'textbox-prompt-colon {str: "";}' \
-		-dmenu \
-		-p "$prompt" \
-		-mesg "$mesg" \
-		-markup-rows \
-		-theme ${theme}
+  rofi -theme-str "window {width: $win_width;}" \
+	-theme-str "listview {columns: $list_col; lines: $list_row;}" \
+	-theme-str 'textbox-prompt-colon {str: "";}' \
+	-dmenu \
+	-p "$prompt" \
+	-mesg "$mesg" \
+	-markup-rows \
+	-theme ${theme}
 }
 
 # Pass variables to rofi dmenu
