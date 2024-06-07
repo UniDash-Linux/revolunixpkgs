@@ -84,7 +84,7 @@ stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [ pikatsuto ];
     licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
-    mainProgram = "rofi-hyprshot";
+    mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })

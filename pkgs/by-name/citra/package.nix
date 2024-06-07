@@ -67,7 +67,7 @@ stdenv.mkDerivation (finalAttrs: {
     maintainers = with lib.maintainers; [ pikatsuto ];
     licenses = lib.licenses.gpl2;
     platforms = lib.platforms.linux;
-    mainProgram = "citra";
+    mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })
