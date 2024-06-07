@@ -1,8 +1,6 @@
 {
   stdenv,
   lib,
-  makeWrapper,
-  # lunarvim,
 }:
 ############
 # Packages #
@@ -18,7 +16,6 @@ stdenv.mkDerivation (finalAttrs: {
   version = "24.05-07-06-2024";
   src = ./src; 
   # ----------------------------------------------------------------- #
-  nativeBuildInputs = [ makeWrapper ];
   prePatch = ''
     patchShebangs . ;
   '';
@@ -44,11 +41,6 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  # ----------------------------------------------------------------- #
-  # postFixup = ''
-  #   wrapProgram $out/bin/${finalAttrs.pname} \
-  #     --prefix PATH : ${lib.makeBinPath [ lunarvim ]}
-  # '';
   # ----------------------------------------------------------------- #
   meta = {
     description = comment;
