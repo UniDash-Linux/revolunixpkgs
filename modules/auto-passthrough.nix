@@ -2,11 +2,16 @@
 let
   cfg = config.virtualization.auto-passthrough;
 
-  inherit (lib) mkOption types;
+  inherit (lib) mkIf mkOption types;
 in {
   options = {
     virtualization.auto-passthrough = {
       enable = mkOption { type = types.bool; };
+
+      sambaAccess = {
+        enable = mkOption { type = types.bool; };
+        username = mkOption { type = types.str; };
+      };
 
       vms = with types; listOf(submodule {
         options = {
@@ -51,7 +56,7 @@ in {
     };
   };
 
-  config = lib.mkIf (cfg.enable) {
+  config = mkIf (cfg.enable) {
     boot = {
       initrd.kernelModules = [
         "vfio_pci"
@@ -88,6 +93,42 @@ in {
         "iommu=pt"
         "video=efifb:off"
       ];
+    };
+
+    services = mkIf (cfg.sambaAccess.enable) {
+      samba = {
+        openFirewall = true;
+        enable = true;
+        securityType = "user";
+
+        shares = {
+          home = {
+            path = "/home/${cfg.sambaAccess.username}";
+            browseable = "yes";
+            writeable = "yes";
+            "acl allow execute always" = true;
+            "read only" = "no";
+            "valid users" = "${cfg.sambaAccess.username}";
+            "create mask" = "0644";
+            "directory mask" = "0755";
+            "force user" = "${cfg.sambaAccess.username}";
+            "force group" = "users";
+          };
+
+          media = {
+            path = "/run/media/${cfg.sambaAccess.username}";
+            browseable = "yes";
+            writeable = "yes";
+            "acl allow execute always" = true;
+            "read only" = "no";
+            "valid users" = "${cfg.sambaAccess.username}";
+            "create mask" = "0644";
+            "directory mask" = "0755";
+            "force user" = "${cfg.sambaAccess.username}";
+            "force group" = "users";
+          };
+        };
+      };
     };
   };
 }
