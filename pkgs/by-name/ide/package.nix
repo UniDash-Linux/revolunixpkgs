@@ -1,6 +1,11 @@
 {
   stdenv,
   lib,
+  makeWrapper,
+  gnat14,
+  gnumake,
+  python311,
+  nodejs,
 }:
 ############
 # Packages #
@@ -16,6 +21,7 @@ stdenv.mkDerivation (finalAttrs: {
   version = "24.05-07-06-2024";
   src = ./src; 
   # ----------------------------------------------------------------- #
+  nativeBuildInputs = [ makeWrapper ];
   prePatch = ''
     patchShebangs . ;
   '';
@@ -40,6 +46,16 @@ stdenv.mkDerivation (finalAttrs: {
       $out/share/applications/${finalAttrs.pname}.desktop
 
     runHook postInstall
+  '';
+  # ----------------------------------------------------------------- #
+  postFixup = ''
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [
+        gnat14
+        gnumake
+        python311
+        nodejs
+      ]}
   '';
   # ----------------------------------------------------------------- #
   meta = {
