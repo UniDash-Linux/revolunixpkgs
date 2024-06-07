@@ -1,0 +1,73 @@
+#!/usr/bin/env bash
+
+## Author  : Aditya Shakya (adi1090x)
+## Github  : @adi1090x
+#
+## Applets : MPD (music)
+
+# Import Current Theme
+source "$HOME"/.config/rofi/applets/shared/theme.bash
+theme="$type/$style"
+
+# Theme Elements
+prompt='Screenshot'
+
+if [[ "$theme" == *'type-5'* ]]; then
+	list_col='1'
+	list_row='5'
+	win_width='520px'
+fi
+
+# Options
+layout=`cat ${theme} | grep 'USE_ICON' | cut -d'=' -f2`
+options=$(
+  ls -la /var/lib/libvirt/qemu \
+    | grep '.xml' \
+    | tr -s " " \
+    | cut -d ' ' -f 9 \
+    | sed 's/.xml//g' \
+    | grep -v "-setup"
+)
+IFS=', ' read -r -a VMS <<< "${options}"
+
+# Rofi CMD
+rofi_cmd() {
+  focus-rofi &
+	rofi -theme-str "window {width: $win_width;}" \
+		-theme-str "listview {columns: $list_col; lines: $list_row;}" \
+		-theme-str 'textbox-prompt-colon {str: "";}' \
+		-dmenu \
+		-p "$prompt" \
+		-mesg "$mesg" \
+		-markup-rows \
+		-theme ${theme}
+}
+
+# Pass variables to rofi dmenu
+run_rofi() {
+	echo "${options}" | sed "s/ /\n/g" | rofi_cmd
+}
+
+rdp() {
+  xfreerdp \
+    -f \
+    -u:"${USER}" \
+    -p:"" \
+    -v:"192.168.122.254"
+}
+
+# Execute Command
+run_vm() {
+  [ "${1}x" == "x" ] && return
+
+  sudo virsh start ${1}
+  looking-glass-client -F
+
+  if [ "${?}x" != "0x" ]; then
+    sleep 3
+    rdp
+  fi
+}
+
+# Actions
+run_vm "$(run_rofi)"
