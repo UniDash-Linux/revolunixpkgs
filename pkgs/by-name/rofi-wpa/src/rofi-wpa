@@ -1,0 +1,263 @@
+#!/usr/bin/env bash
+
+pipe_test() {
+  if [ "${2}x" != "x" ]; then
+    echo "${2}" | ${1}
+  else
+    ${1}
+  fi
+}
+
+replace_sapce() {
+  replace() {
+    sed 's/ /___/g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+reverse_space() {
+  replace() {
+    sed 's/___/ /g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+drop_line() {
+  replace() {
+    sed 's/ /\n/g'
+  }
+  pipe_test "replace" "${1}"
+}
+
+format() {
+  if [ "${1}x" != "x" ]; then
+    drop_line "$(${1} | replace_sapce)" | reverse_space
+  else
+    echo "Error: Need a 1 arg."
+  fi
+}
+
+run_rofi() {
+  echo -e "${1}" \
+    | rofi -theme-str "window {width: 520px;}" \
+      -theme-str "listview {columns: 1; lines: 5;}" \
+      -theme-str "textbox-prompt-colon {str: \"${ICON}\";}" \
+      -dmenu \
+      -p "${PROMPT}" \
+      -mesg "${MSG}" \
+      -markup-rows
+}
+
+get_curent() {
+  iwgetid -r
+}
+
+get_format_wifi() {
+  wpa_cli scan *> /dev/null
+  
+  get_list() {
+    wpa_cli scan_results \
+      | grep -v 'bssid / frequency' \
+      | grep -v 'Selected interface' \
+      | cut -d$'\t' -f 5
+  }
+
+  get_psk() {
+    wpa_cli scan_results \
+      | grep -v 'bssid / frequency' \
+      | grep -v 'Selected interface' \
+      | grep "${1}" \
+      | cut -d$'\t' -f 4
+  }
+
+  CURENT="$(get_curent)"
+  WIFI=""
+  while [[ "${WIFI}x" == "x" || "${WIFI}x" == "${CURENT}x" ]];do
+    WIFI="$(format "get_list")"
+  done
+
+  WIFI_WITH_ICON="󰖂 WireGuard\n"
+  for i in ${WIFI}; do
+
+    ICON_SSID=" ${i}"
+    if [[ $(get_psk ${i}) == "[WPA"* ]]; then
+      ICON_SSID=" ${i}"
+    fi
+
+    WIFI_WITH_ICON+="${ICON_SSID}\n"
+  done
+  
+  echo "${WIFI_WITH_ICON::-2}"
+}
+
+save_network() {
+  wpa_cli save_config > /dev/null
+  sudo cp /run/wpa_supplicant/wpa_supplicant.conf /etc/wpa_supplicant.conf
+}
+load_network() {
+  sudo cp /etc/wpa_supplicant.conf /run/wpa_supplicant/wpa_supplicant.conf
+  wpa_cli reconfigure > /dev/null
+}
+
+connect() {
+
+  remove_network() {
+    echo "
+      disconnect
+      disable_network ${WIFI_ID}
+      set_network ${WIFI_ID} priority 0
+      remove_network ${WIFI_ID}
+      reconnect
+    " | wpa_cli > /dev/null
+
+    rm -rf /etc/wpa_supplicant/wpa_supplicant_${SSID}.conf
+  }
+
+  SSID="${2}"
+  WITH_PASSWORD=${1}
+  CURENT=$(
+    wpa_cli list_networks \
+      | grep "$(get_curent)" \
+      | grep -v 'ssid / bssid /' \
+      | grep -v 'Selected interface' \
+      | cut -d$'\t' -f 1
+  )
+  [ "${CURENT}x" == "x" ] \
+    && CURENT=0
+
+  if [ "$(wpa_cli list_networks | grep "${SSID}")x" != "x" ]; then
+    WIFI_ID=$(
+      wpa_cli list_networks \
+        | grep "${SSID}" \
+        | grep -v 'ssid / bssid /' \
+        | grep -v 'Selected interface' \
+        | cut -d$'\t' -f 1
+    )
+
+    echo "
+      disconnect
+      set_network ${CURENT} priority 0
+      set_network ${WIFI_ID} priority 10
+      reconnect
+    " | wpa_cli > /dev/null
+
+    save_network
+    sleep 15
+  else
+    WIFI_ID=$(wpa_cli add_network | grep -v 'Selected interface')
+  fi
+
+  PASSWORD="aaa"
+  while [[ "$(get_curent)x" != "${SSID}x" && "${PASSWORD}x" != "x" ]]; do
+
+    if [ "${WITH_PASSWORD}x" == "truex" ]; then
+      MSG="Enter your wifi password."
+      PASSWORD="$(run_rofi "")"
+
+      if [ "${PASSWORD}x" == "x" ]; then
+        remove_network
+        return 0
+      fi
+
+      echo "
+        disconnect
+        set_network ${CURENT} priority 0
+        set_network ${WIFI_ID} ssid \"${SSID}\"
+        set_network ${WIFI_ID} psk \"${PASSWORD}\"
+        set_network ${WIFI_ID} key_mgmt WPA-PSK
+        set_network ${WIFI_ID} priority 10
+        enable_network ${WIFI_ID}
+        reconnect
+      " | wpa_cli > /dev/null
+
+    else
+      echo "
+        disconnect
+        set_network ${CURENT} priority 0
+        set_network ${WIFI_ID} ssid \"${SSID}\"
+        set_network ${WIFI_ID} key_mgmt NONE
+        set_network ${WIFI_ID} priority 10
+        enable_network ${WIFI_ID}
+        reconnect
+      " | wpa_cli > /dev/null
+    fi
+
+    save_network
+    sleep 15
+  done
+
+  [ "$(get_curent)x" == "${SSID}x" ] && exit 0
+}
+
+get_wireguard() {
+  VPN_FILE=$(
+    ls /etc/wireguard/ \
+      | grep '.conf' \
+      | sed 's/.conf//g'
+  )
+  VPN="aaa"
+
+  while [ "${VPN}x" != "x" ]; do
+    VPN_STRING=""
+
+    for i in ${VPN_FILE}; do
+      VPN_INTERFACE="$(
+        ip -br a \
+          | grep ${i}
+      )"
+
+      if [ "${VPN_INTERFACE}x" == "x" ]; then
+        VPN_STRING+=" ${i}\n"
+      else
+        VPN_STRING+=" ${i}\n"
+      fi
+    done
+
+    VPN=$(run_rofi "${VPN_STRING::-2}")
+    [ "${VPN}x" == "x" ] && break
+
+    VPN_NAME=$(echo "${VPN}" | cut -d ' ' -f 2)
+    VPN_ICON=$(echo "${VPN}" | cut -d ' ' -f 1)
+
+    echo ${VPN_NAME}
+
+    if [ "${VPN_ICON}" == "" ];then
+      sudo wg-quick up ${VPN_NAME}
+    else
+      sudo wg-quick down ${VPN_NAME}
+    fi
+  done
+}
+
+main() {
+  WIFI="aaa"
+
+  while [ "${WIFI}x" != "x" ]; do
+    PROMPT="Network"
+    MSG="Choice Wifi"
+    ICON="󰤥"
+
+    WIFI=$(run_rofi "$(get_format_wifi)")
+    SSID=${WIFI:2}
+    LOCK_ICON=${WIFI::1}
+    INTERFACE=$(iw dev | awk '$1=="Interface"{print $2}')
+
+    [ "${WIFI}x" == "󰖂 WireGuardx" ] \
+      && get_wireguard
+
+    [[ "${SSID}x" == "x" || "${WIFI}x" == "󰖂 WireGuardx" ]] \
+      && exit 0
+
+    WITH_PASSWORD=true
+    [ "${LOCK_ICON}x" != "x" ] \
+      && WITH_PASSWORD=false
+
+    connect ${WITH_PASSWORD} "${SSID}"
+  done
+}
+
+if [ "${1}x" != "-lx" ]; then
+  main
+else
+  load_network
+fi
