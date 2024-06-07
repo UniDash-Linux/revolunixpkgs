@@ -65,27 +65,30 @@ in {
         "amdgpu"
       ];
 
-      extraModprobeConfig = lib.concatStrings ([
-        ''
+      extraModprobeConfig = let
+        baseConfig = ''
           options kvm_intel kvm_amd modeset=1
-        ''
-      ] ++ (builtins.map (vm:
-        (if (vm.blacklistPcie != false)
-         then ''
+        '';
+
+       vfioPciOptions = builtins.map (vm:
+        lib.optionalString (vm.blacklistPcie) ''
            options vfio-pci ids=${vm.blacklistPcie}
-         ''
-         else "")
-      ) cfg.vms) ++ (builtins.map (vm:
-        lib.concatStrings (if vm.pcies != false
-          then lib.forEach vm.pcies (pcie:
-            if pcie.blacklistDriver
-            then ''
+        '');
+
+       pciBlacklistOptions = builtins.map (vm:
+        lib.concatStrings (
+          lib.forEach vm.pcies (pcie:
+            lib.optionalString (pcie.blacklistDriver) ''
               options ${pcie.driver} modeset=0
               blacklist ${pcie.driver}
-            ''
-            else "")
-          else [])
-        ) cfg.vms));
+            ''))
+        );
+
+      in lib.concatStrings ([
+        baseConfig
+        (vfioPciOptions cfg.vms)
+        (pciBlacklistOptions cfg.vms)
+      ]);
 
       kernelParams = [
         "intel_iommu=on"
