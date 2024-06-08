@@ -6,6 +6,9 @@
   gnumake,
   python311,
   nodejs,
+  bottom,
+  ripgrep,
+  lazygit,
 }:
 ############
 # Packages #
@@ -24,6 +27,10 @@ stdenv.mkDerivation (finalAttrs: {
   nativeBuildInputs = [ makeWrapper ];
   prePatch = ''
     patchShebangs . ;
+
+    substituteInPlace ide \
+      --replace-fail "/Applications/ide/nvim" \
+        "${placeholder "out"}/Applications/ide/nvim"
   '';
   # ----------------------------------------------------------------- #
   installPhase = ''
@@ -55,6 +62,9 @@ stdenv.mkDerivation (finalAttrs: {
         gnumake
         python311
         nodejs
+        bottom
+        ripgrep
+        lazygit
       ]}
   '';
   # ----------------------------------------------------------------- #
