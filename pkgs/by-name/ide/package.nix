@@ -9,6 +9,7 @@
   bottom,
   ripgrep,
   lazygit,
+  wl-clipboard,
 }:
 ############
 # Packages #
@@ -65,6 +66,7 @@ stdenv.mkDerivation (finalAttrs: {
         bottom
         ripgrep
         lazygit
+        wl-clipboard
       ]}
   '';
   # ----------------------------------------------------------------- #
