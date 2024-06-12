@@ -1,0 +1,13 @@
+#!/usr/bin/env sh
+
+hyprctl dispatch resizeactive exact 1895 1013
+hyprctl dispatch moveactive exact 13 55
+hyprctl dispatch togglefloating
+hyprctl dispatch resizeactive exact 5760 1080
+hyprctl dispatch moveactive exact -1920 0
+
+if [ "$(ps aux | grep 'waybar' | grep -v 'grep')x" == "x" ]; then
+  waybar &
+else
+  pkill -f waybar
+fi
