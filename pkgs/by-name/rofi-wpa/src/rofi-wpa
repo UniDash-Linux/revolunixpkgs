@@ -49,7 +49,9 @@ run_rofi() {
 }
 
 get_curent() {
-  iwgetid -r
+  wpa_cli list_networks \
+    | grep CURRENT \
+    | cut -d $'\t' -f 2
 }
 
 get_format_wifi() {
