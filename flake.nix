@@ -30,7 +30,7 @@
         in
         pkgs.lib.filesystem.packagesFromDirectoryRecursive {
           inherit (scope) callPackage;
-          directory = ./pkgs/by-name;
+          directory = ./pkgs;
         });
     };
 }
