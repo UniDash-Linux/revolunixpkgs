@@ -16,11 +16,11 @@ in
 # --------------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "exemple";
-  version = "nightly-2024.06.17-18.01.02";
+  version = "nightly-2024.06.17-18.02.13";
   ## ----------------------------------------------------------------- ##
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-focus-rofi/releases/download/nightly-2024.06.17-18.01.02/src-focus-rofi.tar.gz";
-    sha256 = "7880000957e89635022a90a2014d213d91ed62541419ea780f989411e1f94a3d";
+    url = "https://github.com/RevoluNix/pkg-focus-rofi/releases/download/nightly-2024.06.17-18.02.13/src-focus-rofi.tar.gz";
+    sha256 = "72ecb42e8251cd902d772b2261c0cc78d33c67ba05c89b958b76d353a05692b6";
   }; 
   ## ----------------------------------------------------------------- ##
   nativeBuildInputs = [ makeWrapper ];
