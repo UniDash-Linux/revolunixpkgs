@@ -1,46 +1,45 @@
 {
+  fetchurl,
   stdenv,
   lib,
-  fetchurl,
   makeWrapper,
-  appimage-run,
+  bash,
 }:
 ############
 # Packages #
-#######################################################################
+#########################################################################
 let
-  appimageName = "citra-qt.AppImage";
-  iconPath = "dist/citra.png";
-  name = "Citra PabloMK7";
-  comment = "Citra 3DS emulator";
+  iconPath = "icon.png";
+  name = "Exemple Application";
+  comment = "Exemple Application";
 in
-# ----------------------------------------------------------------- #
+# --------------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "citra";
-  version = "24.05-06-06-2024";
-  # ----------------------------------------------------------------- #
+  pname = "exemple";
+  version = "release-2024.06.17-19.31.37";
+  ## ----------------------------------------------------------------- ##
   src = fetchurl {
-    url = "https://github.com/PabloMK7/citra/releases/download/rde1f082/citra-linux-appimage-20240601-de1f082.tar.gz";
-    sha256 = "4c8e57d5e891b0f75baa8ff605c9fa4d90f13e15f8d60daa0edb21763b9a70da";
-  };
-  sourceRoot = ".";
-  # ----------------------------------------------------------------- #
+    url = "https://github.com/RevoluNix/pkg-citra/releases/download/release-2024.06.17-19.31.37/src-citra.tar.gz";
+    sha256 = "7fe26fbb0d4584c8c4905b3287b7efd71ae41384020cdd8b522558c1ae52faa2";
+  }; 
+  ## ----------------------------------------------------------------- ##
   nativeBuildInputs = [ makeWrapper ];
-  # ----------------------------------------------------------------- #
+  ## ----------------------------------------------------------------- ##
   prePatch = ''
     patchShebangs . ;
+
+    substituteInPlace exemple \
+      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  # ----------------------------------------------------------------- #
+  ## ----------------------------------------------------------------- ##
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/Applications
-    cp -r ./*/ $out/Applications/${finalAttrs.pname}
+    mkdir -p $out/bin/ $out/Applications/
+    cp -r ./ $out/Applications/${finalAttrs.pname}/
 
-    echo -e "#!" "/usr/bin/env sh\n\n" \
-      "appimage-run $out/Applications/${finalAttrs.pname}/${appimageName}" \
-      > ./${finalAttrs.pname}
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
+    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -55,17 +54,19 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  # ----------------------------------------------------------------- #
+  ## ----------------------------------------------------------------- ##
   postFixup = ''
-    wrapProgram $out/bin/${finalAttrs.pname} \
-      --prefix PATH : ${lib.makeBinPath [ appimage-run ]}
+    wrapProgram $out/bin/exemple-2 \
+      --prefix PATH : ${lib.makeBinPath [
+        bash
+      ]}
   '';
-  # ----------------------------------------------------------------- #
+  ## ----------------------------------------------------------------- ##
   meta = {
     description = comment;
-    homepage = "https://github.com/PabloMK7/citra";
+    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.gpl2;
+    licenses = lib.licenses.lgpl2;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
