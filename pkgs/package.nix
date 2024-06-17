@@ -17,7 +17,7 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "citra";
-  version = "nightly-2024.06.17-21.26.32";
+  version = "nightly-2024.06.17-22.48.57";
   # ----------------------------------------------------------------- #
   src = fetchurl {
     url = "https://github.com/PabloMK7/citra/releases/download/r4f174f1/citra-linux-appimage-20240615-4f174f1.tar.gz";
