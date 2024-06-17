@@ -1,25 +1,31 @@
 {
-  fetchurl,
   stdenv,
   lib,
+  fetchurl,
+  makeWrapper,
+  appimage-run,
 }:
 ############
 # Packages #
 #######################################################################
 let
-  iconPath = "icon.png";
-  name = "Font Fixer";
-  comment = "Copy store font to user path";
+  appimageName = "citra-qt.AppImage";
+  iconPath = "dist/citra.png";
+  name = "Citra PabloMK7";
+  comment = "Citra 3DS emulator";
 in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "font-fixer";
-  version = "release-2024.06.17-22.36.41";
+  pname = "citra";
+  version = "release-2024.06.17-22.49.20";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-font-fixer/releases/download/release-2024.06.17-22.36.41/src-font-fixer.tar.gz";
-    sha256 = "5acb55d68dd13b24e5902f09e8e6980d7cdeaec393529eb01a31472711d7e0b3";
-  }; 
+    url = "https://github.com/PabloMK7/citra/releases/download/r4f174f1/citra-linux-appimage-20240615-4f174f1.tar.gz";
+    sha256 = "49702ca01a5c91431428489c0567437d5161bb19002e36f48e6836c6e7fcad62";
+  };
+  sourceRoot = ".";
+  # ----------------------------------------------------------------- #
+  nativeBuildInputs = [ makeWrapper ];
   # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
@@ -28,9 +34,12 @@ stdenv.mkDerivation (finalAttrs: {
   installPhase = ''
     runHook preInstall
 
-    mkdir -p $out/bin/ $out/Applications/
-    cp -r ./ $out/Applications/${finalAttrs.pname}/
+    mkdir -p $out/Applications
+    cp -r ./*/ $out/Applications/${finalAttrs.pname}
 
+    echo -e "#!" "/usr/bin/env sh\n\n" \
+      "appimage-run $out/Applications/${finalAttrs.pname}/${appimageName}" \
+      > ./${finalAttrs.pname}
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
 
     echo -e "[Desktop Entry]\n" \
@@ -47,10 +56,16 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
   # ----------------------------------------------------------------- #
+  postFixup = ''
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ appimage-run ]}
+  '';
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
+    homepage = "https://github.com/PabloMK7/citra";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.gpl3Plus;
+    licenses = lib.licenses.gpl2;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
