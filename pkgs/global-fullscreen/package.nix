@@ -3,72 +3,46 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  waybar,
 }:
 ############
 # Packages #
-#########################################################################
-let
-  iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
-in
-# --------------------------------------------------------------------- #
+#######################################################################
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.17-22.39.29";
-  ## ----------------------------------------------------------------- ##
+  pname = "global-fullscreen";
+  version = "release-2024.06.17-22.46.00";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-global-fullscreen/releases/download/release-2024.06.17-22.39.29/src-global-fullscreen.tar.gz";
-    sha256 = "e5fa8d563282c8ae27053c9d5a804c24157a6a343e0847befea505932e140059";
+    url = "https://github.com/RevoluNix/pkg-global-fullscreen/releases/download/release-2024.06.17-22.46.00/src-global-fullscreen.tar.gz";
+    sha256 = "e72ec8f15185801f3c8e00d6faaa7c3de3db5d0e3db49868c79e6aae5f19c8c1";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
     mkdir -p $out/bin/ $out/Applications/
     cp -r ./ $out/Applications/${finalAttrs.pname}/
-
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
-
-    echo -e "[Desktop Entry]\n" \
-      "Type=Application\n" \
-      "Name=${name}\n" \
-      "Comment=${comment}\n" \
-      "Icon=$out/Applications/${finalAttrs.pname}/${iconPath}\n" \
-      "Exec=$out/bin/${finalAttrs.pname}\n" \
-      "Terminal=false" > ./${finalAttrs.pname}.desktop
-
-    install -D ${finalAttrs.pname}.desktop \
-      $out/share/applications/${finalAttrs.pname}.desktop
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ waybar ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
-    description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
+    description = "CLI backup/sync manager";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.lgpl;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })
+
