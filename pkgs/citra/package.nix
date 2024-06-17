@@ -16,11 +16,11 @@ in
 # --------------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "exemple";
-  version = "nightly-2024.06.17-19.31.34";
+  version = "nightly-2024.06.17-21.05.00";
   ## ----------------------------------------------------------------- ##
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-citra/releases/download/nightly-2024.06.17-19.31.34/src-citra.tar.gz";
-    sha256 = "23a8ba2e11170c351aefb6aa5fe609e20ed7c7c0bcd2f7bec90fd0c5fc3a0123";
+    url = "https://github.com/RevoluNix/pkg-citra/releases/download/nightly-2024.06.17-21.05.00/src-citra.tar.gz";
+    sha256 = "313c410252a7055fb7933d4c42c154248266385b8e1f18b8344cb5490e18f64a";
   }; 
   ## ----------------------------------------------------------------- ##
   nativeBuildInputs = [ makeWrapper ];
