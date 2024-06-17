@@ -2,36 +2,29 @@
   fetchurl,
   stdenv,
   lib,
-  makeWrapper,
-  bash,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Font Fixer";
+  comment = "Copy store font to user path";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "nightly-2024.06.17-22.10.47";
-  ## ----------------------------------------------------------------- ##
+  pname = "font-fixer";
+  version = "nightly-2024.06.17-22.36.07";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-font-fixer/releases/download/nightly-2024.06.17-22.10.47/src-font-fixer.tar.gz";
-    sha256 = "db9968f48ad20fec1d3abbf2229433be2e7ecc775991b18b8cec34e5826a082b";
+    url = "https://github.com/RevoluNix/pkg-font-fixer/releases/download/nightly-2024.06.17-22.36.07/src-font-fixer.tar.gz";
+    sha256 = "c5567792347d82fd4710099921dbf7da56a6792f8bcc8672b8e2fbd9f5d9ca36";
   }; 
-  ## ----------------------------------------------------------------- ##
-  nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +32,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +46,11 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
-  postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
-  '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
