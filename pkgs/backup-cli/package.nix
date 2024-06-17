@@ -3,72 +3,46 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  rofi-wayland,
 }:
 ############
 # Packages #
-#########################################################################
-let
-  iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
-in
-# --------------------------------------------------------------------- #
+#######################################################################
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.17-21.31.53";
-  ## ----------------------------------------------------------------- ##
+  pname = "backup-cli";
+  version = "release-2024.06.17-21.37.03";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/backup-cli/releases/download/release-2024.06.17-21.31.53/src-backup-cli.tar.gz";
-    sha256 = "87c0a15d3e909bc303976cfc2cf429b1f4bdc2d6c5081a3975e6d55eef6eee32";
+    url = "https://github.com/RevoluNix/backup-cli/releases/download/release-2024.06.17-21.37.03/src-backup-cli.tar.gz";
+    sha256 = "649e8a8846c92638a95edd246d2afbf9ca8a5c18a4cd5afd0adf5a259646465e";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
     mkdir -p $out/bin/ $out/Applications/
     cp -r ./ $out/Applications/${finalAttrs.pname}/
-
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
-
-    echo -e "[Desktop Entry]\n" \
-      "Type=Application\n" \
-      "Name=${name}\n" \
-      "Comment=${comment}\n" \
-      "Icon=$out/Applications/${finalAttrs.pname}/${iconPath}\n" \
-      "Exec=$out/bin/${finalAttrs.pname}\n" \
-      "Terminal=false" > ./${finalAttrs.pname}.desktop
-
-    install -D ${finalAttrs.pname}.desktop \
-      $out/share/applications/${finalAttrs.pname}.desktop
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
-    description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
+    description = "CLI backup/sync manager";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.lgpl;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })
+
