@@ -3,35 +3,39 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  rofi-wayland,
+  jq,
+  grim,
+  slurp,
+  wl-clipboard,
+  libnotify,
+  wf-recorder,
+  ffmpeg,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Hyprshot";
+  comment = "Rofi hyprland screenshot manager";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "nightly-2024.06.18-13.36.26";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-hyprshot";
+  version = "nightly-2024.06.18-13.39.15";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-hyprshot/releases/download/nightly-2024.06.18-13.36.26/src-rofi-hyprshot.tar.gz";
-    sha256 = "9a48f585cb818e6699931a6cf2ab2005d68d18bd22a9dc63ed8faf88873c383d";
+    url = "https://github.com/RevoluNix/pkg-rofi-hyprshot/releases/download/nightly-2024.06.18-13.39.15/src-rofi-hyprshot.tar.gz";
+    sha256 = "769a5292853b45cbbd464c5d26e6eeb6121127e7eb75cd5be09680a43d22f3d5";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +43,7 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
+    install -Dm 755 hyprshot $out/bin/hyprshot
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +58,35 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
+    wrapProgram $out/bin/hyprshot \
       --prefix PATH : ${lib.makeBinPath [
-        bash
+        jq
+        grim
+        slurp
+        wl-clipboard
+        libnotify
+        rofi-wayland
+      ]}
+    wrapProgram $out/bin/rofi-hyprshot \
+      --prefix PATH : ${lib.makeBinPath [
+        jq
+        grim
+        slurp
+        wl-clipboard
+        libnotify
+        rofi-wayland
+        wf-recorder
+        ffmpeg
       ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
+    homepage = "https://github.com/NixAchu/rofi-beats";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
