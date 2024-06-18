@@ -3,35 +3,32 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  rofi-wayland,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Bluetooth";
+  comment = "Rofi bluetooth manager";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.18-12.59.14";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-bluetooth";
+  version = "release-2024.06.18-13.02.50";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-bluetooth/releases/download/release-2024.06.18-12.59.14/src-rofi-bluetooth.tar.gz";
-    sha256 = "a06a522fc5b35d157b2ee5c0e027c7a8c53fbe6c4f4c67e686dfd5b600cfdf06";
+    url = "https://github.com/RevoluNix/pkg-rofi-bluetooth/releases/download/release-2024.06.18-13.02.50/src-rofi-bluetooth.tar.gz";
+    sha256 = "b70b6ded52eae00180e1f5da8e074fc21dd5c9378ba6306193e288c261af6c0d";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +36,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,21 +50,20 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
+    homepage = "https://github.com/nickclyde/rofi-bluetooth";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })
+
