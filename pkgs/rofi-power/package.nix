@@ -3,35 +3,33 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  rofi-wayland,
+  swaylock-effects,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Power";
+  comment = "Rofi power menu";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.18-22.07.34";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-power";
+  version = "release-2024.06.18-22.17.35";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-power/releases/download/release-2024.06.18-22.07.34/src-rofi-power.tar.gz";
-    sha256 = "1ab75593c95377308da1f676411c156b955613207e46815f78674eec07a788db";
+    url = "https://github.com/RevoluNix/pkg-rofi-power/releases/download/release-2024.06.18-22.17.35/src-rofi-power.tar.gz";
+    sha256 = "214f1b4fcc1d346b6620f92ceae5ea2e40c88c997101e773d28c5f1e9508bb7c";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +37,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +51,16 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland swaylock-effects ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
