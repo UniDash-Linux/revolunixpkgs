@@ -3,35 +3,33 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  rofi-wayland,
+  freerdp,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Virtual Machine";
+  comment = "Rofi virtual machine manager";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "nightly-2024.06.18-22.19.01";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-vm";
+  version = "nightly-2024.06.18-22.21.23";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-vm/releases/download/nightly-2024.06.18-22.19.01/src-rofi-vm.tar.gz";
-    sha256 = "ed74160b6fbb218e46968cdb0433464b950dc24e6b0b35416b000f7d0e93e49d";
+    url = "https://github.com/RevoluNix/pkg-rofi-vm/releases/download/nightly-2024.06.18-22.21.23/src-rofi-vm.tar.gz";
+    sha256 = "4de247258b0b16ef82029bb0c7416457ca125e2b6e8b5f5834fc552b816ae55a";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +37,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +51,16 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
-      --prefix PATH : ${lib.makeBinPath [
-        bash
-      ]}
+    wrapProgram $out/bin/${finalAttrs.pname} \
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland freerdp ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
