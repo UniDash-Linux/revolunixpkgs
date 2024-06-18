@@ -3,35 +3,42 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  gnat14,
+  gnumake,
+  python311,
+  nodejs,
+  bottom,
+  ripgrep,
+  lazygit,
+  wl-clipboard,
+  nil,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "IDE";
+  comment = "custom lvim launcher";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.18-10.54.52";
-  ## ----------------------------------------------------------------- ##
+  pname = "ide";
+  version = "release-2024.06.18-10.57.49";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.06.18-10.54.52/src-ide.tar.gz";
-    sha256 = "a00fb7da9c91eabf0c086e88b3a499ebcd99e2ea6a90827aa510900f32dfaeff";
+    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.06.18-10.57.49/src-ide.tar.gz";
+    sha256 = "dabe62c8f93d48b996b74c054ce741398adaf8096b15ebc9487c44992881ea67";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
   prePatch = ''
     patchShebangs . ;
 
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
+    substituteInPlace ide \
+      --replace-fail "/Applications/ide/nvim" \
+        "${placeholder "out"}/Applications/ide/nvim"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +46,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +60,26 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
+    wrapProgram $out/bin/${finalAttrs.pname} \
       --prefix PATH : ${lib.makeBinPath [
-        bash
+        gnat14
+        gnumake
+        python311
+        nodejs
+        bottom
+        ripgrep
+        lazygit
+        wl-clipboard
+        nil
       ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
