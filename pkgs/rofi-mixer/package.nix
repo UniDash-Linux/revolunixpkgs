@@ -2,36 +2,32 @@
   fetchurl,
   stdenv,
   lib,
+  callPackage,
   makeWrapper,
-  bash,
+  rofi-wayland,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Mixer";
+  comment = "Rofi sound out/in manager";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "nightly-2024.06.18-21.52.55";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-mixer";
+  version = "nightly-2024.06.18-22.05.39";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/nightly-2024.06.18-21.52.55/src-rofi-mixer.tar.gz";
-    sha256 = "9b9ad80b0082eb3e9903b1e21b1fe40ca2f7d938adcf881cbcc9fbe49c69c63d";
+    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/nightly-2024.06.18-22.05.39/src-rofi-mixer.tar.gz";
+    sha256 = "9d12eee8675af47c59840c4813d7f9c11f216992afd428b6da82bed39bc411be";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
   prePatch = ''
     patchShebangs . ;
-
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +35,6 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,21 +49,22 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
+    wrapProgram $out/bin/${finalAttrs.pname} \
       --prefix PATH : ${lib.makeBinPath [
-        bash
+        rofi-wayland
+        (callPackage ../focus-rofi/package.nix { })
       ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
   #######################################################################
 })
+
