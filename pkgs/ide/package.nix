@@ -24,10 +24,10 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "ide";
-  version = "release-2024.06.18-10.57.49";
+  version = "release-2024.06.18-10.59.59";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.06.18-10.57.49/src-ide.tar.gz";
-    sha256 = "dabe62c8f93d48b996b74c054ce741398adaf8096b15ebc9487c44992881ea67";
+    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.06.18-10.59.59/src-ide.tar.gz";
+    sha256 = "a8a3b7c44966943afd49f255a2cb3c991c032371144f81d9995288111f5c8bd4";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
