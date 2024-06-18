@@ -3,35 +3,37 @@
   stdenv,
   lib,
   makeWrapper,
-  bash,
+  mpv,
+  youtube-dl,
+  rofi-wayland,
 }:
 ############
 # Packages #
-#########################################################################
+#######################################################################
 let
   iconPath = "icon.png";
-  name = "Exemple Application";
-  comment = "Exemple Application";
+  name = "Rofi Beats";
+  comment = "Rofi music player";
 in
-# --------------------------------------------------------------------- #
+# ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
-  pname = "exemple";
-  version = "release-2024.06.18-11.01.42";
-  ## ----------------------------------------------------------------- ##
+  pname = "rofi-beats";
+  version = "release-2024.06.18-11.08.49";
+  # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/release-2024.06.18-11.01.42/src-rofi-beats.tar.gz";
-    sha256 = "f7292f3549fea705657affcbe806be0ea70d7a8faa8c8fbcbb7ed369fc8afa62";
+    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/release-2024.06.18-11.08.49/src-rofi-beats.tar.gz";
+    sha256 = "5373056a562967b25b21d4b6189a20ca51ee12bddc576b0e5b69b55cf55f428d";
   }; 
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   prePatch = ''
     patchShebangs . ;
 
-    substituteInPlace exemple \
-      --replace-fail "exemple-2" "${placeholder "out"}/bin/exemple-2"
+    substituteInPlace rofi-beats \
+      --replace-fail "play-music \"" "${placeholder "out"}/bin/play-music \""
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   installPhase = ''
     runHook preInstall
 
@@ -39,7 +41,7 @@ stdenv.mkDerivation (finalAttrs: {
     cp -r ./ $out/Applications/${finalAttrs.pname}/
 
     install -Dm 755 ${finalAttrs.pname} $out/bin/${finalAttrs.pname}
-    install -Dm 755 exemple-2 $out/bin/exemple-2
+    install -Dm 755 play-music $out/bin/play-music
 
     echo -e "[Desktop Entry]\n" \
       "Type=Application\n" \
@@ -54,19 +56,21 @@ stdenv.mkDerivation (finalAttrs: {
 
     runHook postInstall
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   postFixup = ''
-    wrapProgram $out/bin/exemple-2 \
+    wrapProgram $out/bin/play-music \
       --prefix PATH : ${lib.makeBinPath [
-        bash
+        mpv
+        youtube-dl
+        rofi-wayland
       ]}
   '';
-  ## ----------------------------------------------------------------- ##
+  # ----------------------------------------------------------------- #
   meta = {
     description = comment;
-    homepage = "https://github.com/RevoluNix/pkgs-template/";
+    homepage = "https://github.com/NixAchu/rofi-beats";
     maintainers = with lib.maintainers; [ pikatsuto ];
-    licenses = lib.licenses.lgpl2;
+    licenses = lib.licenses.gpl3Plus;
     platforms = lib.platforms.linux;
     mainProgram = finalAttrs.pname;
   };
