@@ -17,11 +17,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-vm";
-  version = "nightly-2024.06.18-22.21.23";
+  version = "testing-2024.06.24-09.34.49";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-vm/releases/download/nightly-2024.06.18-22.21.23/src-rofi-vm.tar.gz";
-    sha256 = "4de247258b0b16ef82029bb0c7416457ca125e2b6e8b5f5834fc552b816ae55a";
+    url = "https://github.com/RevoluNix/pkg-rofi-vm/releases/download/testing-2024.06.24-09.34.49/src-rofi-vm.tar.gz";
+    sha256 = "6b34fd6aa562d4f4b84313b8058a430b234c94191a804028831061f55862f015";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
