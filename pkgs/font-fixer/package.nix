@@ -14,11 +14,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "font-fixer";
-  version = "nightly-2024.06.17-23.10.42";
+  version = "testing-2024.06.24-10.05.40";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-font-fixer/releases/download/nightly-2024.06.17-23.10.42/src-font-fixer.tar.gz";
-    sha256 = "fe963867c3c12e3746f14c08526ce8f9c9052689a03195ae9abc91afa6902e55";
+    url = "https://github.com/RevoluNix/pkg-font-fixer/releases/download/testing-2024.06.24-10.05.40/src-font-fixer.tar.gz";
+    sha256 = "0a1ee5d0628392d9ca22694041151e008c5560aa557203a4378f6cbbf1e1b0c0";
   }; 
   # ----------------------------------------------------------------- #
   prePatch = ''
