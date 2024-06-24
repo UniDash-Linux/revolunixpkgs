@@ -18,11 +18,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-beats";
-  version = "nightly-2024.06.18-11.08.25";
+  version = "testing-2024.06.24-09.37.12";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/nightly-2024.06.18-11.08.25/src-rofi-beats.tar.gz";
-    sha256 = "e6ad2d095af0071f94606bfe24efe095d00601ac90eb788681e4d20f1c745bee";
+    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/testing-2024.06.24-09.37.12/src-rofi-beats.tar.gz";
+    sha256 = "6c3d089547afcabc843cba803b6861ee7f936dfdb75469feff0c59e306619b66";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
