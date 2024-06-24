@@ -10,10 +10,10 @@
 #######################################################################
 stdenv.mkDerivation (finalAttrs: {
   pname = "global-fullscreen";
-  version = "nightly-2024.06.17-23.13.25";
+  version = "testing-2024.06.24-10.06.04";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-global-fullscreen/releases/download/nightly-2024.06.17-23.13.25/src-global-fullscreen.tar.gz";
-    sha256 = "21faddd487e8d3a63871fddeb1914590dffe8c4735d5e64b444c25bd9cf838ea";
+    url = "https://github.com/RevoluNix/pkg-global-fullscreen/releases/download/testing-2024.06.24-10.06.04/src-global-fullscreen.tar.gz";
+    sha256 = "445b41c3173ced41af9987dc83ce944204b22caab23a28b7eb09c2f45d28661f";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
