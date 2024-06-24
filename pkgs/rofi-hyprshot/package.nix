@@ -23,11 +23,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-hyprshot";
-  version = "nightly-2024.06.18-13.39.15";
+  version = "testing-2024.06.24-09.36.20";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-hyprshot/releases/download/nightly-2024.06.18-13.39.15/src-rofi-hyprshot.tar.gz";
-    sha256 = "769a5292853b45cbbd464c5d26e6eeb6121127e7eb75cd5be09680a43d22f3d5";
+    url = "https://github.com/RevoluNix/pkg-rofi-hyprshot/releases/download/testing-2024.06.24-09.36.20/src-rofi-hyprshot.tar.gz";
+    sha256 = "7a0bd4ac856cae6a1ce9bfb11b2c7313fe556ac1f47eff7a363f022a83653981";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
