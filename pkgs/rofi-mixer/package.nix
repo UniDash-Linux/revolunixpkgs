@@ -1,6 +1,5 @@
 {
   fetchurl,
-  fetchurl,
   stdenv,
   lib,
   callPackage,
@@ -18,10 +17,10 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-mixer";
-  version = "testing-2024.06.24-11.21.48";
+  version = "testing-2024.06.24-11.25.44";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/testing-2024.06.24-11.21.48/src-rofi-mixer.tar.gz";
-    sha256 = "2e036de4a10854006e758f90235b3606fe293031a89bc0e1fd89ff08c2388de0";
+    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/testing-2024.06.24-11.25.44/src-rofi-mixer.tar.gz";
+    sha256 = "b7e4297714a82c32aaeae83f14ba91320db94e003d8ef4da4453a2df83db773f";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
