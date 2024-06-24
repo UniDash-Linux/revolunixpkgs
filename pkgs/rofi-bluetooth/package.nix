@@ -16,11 +16,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-bluetooth";
-  version = "nightly-2024.06.18-13.02.16";
+  version = "testing-2024.06.24-09.36.45";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-bluetooth/releases/download/nightly-2024.06.18-13.02.16/src-rofi-bluetooth.tar.gz";
-    sha256 = "db446b9a31b2db394406061c7383d2f251af23f2dcc238b7fad368d07e54d22f";
+    url = "https://github.com/RevoluNix/pkg-rofi-bluetooth/releases/download/testing-2024.06.24-09.36.45/src-rofi-bluetooth.tar.gz";
+    sha256 = "6bb2551b25b25e63eac95250cd4de0355ea3f64f9792ad5744bdf754de9014ec";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
