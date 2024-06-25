@@ -10,10 +10,10 @@
 #######################################################################
 stdenv.mkDerivation (finalAttrs: {
   pname = "backup-cli";
-  version = "release-2024.06.22-23.32.41";
+  version = "release-2024.06.25-23.32.55";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-backup-cli/releases/download/release-2024.06.22-23.32.41/src-backup-cli.tar.gz";
-    sha256 = "18ac205850c03e2ae23c506034971fd1ffa9602e66577efe679f6a9098856589";
+    url = "https://github.com/RevoluNix/pkg-backup-cli/releases/download/release-2024.06.25-23.32.55/src-backup-cli.tar.gz";
+    sha256 = "4773c61ee715b81e1d6fb0b62fa894da7a1660cc820b8264e4cea9c3a1c51960";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
