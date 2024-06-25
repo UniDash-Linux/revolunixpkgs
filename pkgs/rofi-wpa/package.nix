@@ -16,11 +16,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-wpa";
-  version = "release-2024.06.18-22.32.26";
+  version = "release-2024.06.25-23.31.56";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-wpa/releases/download/release-2024.06.18-22.32.26/src-rofi-wpa.tar.gz";
-    sha256 = "6468dfbf688245d05292fda672580068317bdfe25e9ad4e7762d61a349f70292";
+    url = "https://github.com/RevoluNix/pkg-rofi-wpa/releases/download/release-2024.06.25-23.31.56/src-rofi-wpa.tar.gz";
+    sha256 = "5c91d7f58a230394b10b8ee00fde9d73977a8ad03011e6a266774b6d5e8a8703";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
