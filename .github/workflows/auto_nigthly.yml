@@ -1,0 +1,33 @@
+on:
+  workflow_dispatch
+
+jobs:
+  auto_nightly:
+    name: convert testing to nightly
+    runs-on: ubuntu-22.04
+    steps:
+      - name: pr_all_to_nightly
+        run: |
+          QUERY_RESULT=$(
+            curl -L \
+              -H "Accept: application/vnd.github+json" \
+              -H "Authorization: Bearer ${{ secrets.RevoluNixPKGS_TOKEN }}" \
+              -H "X-GitHub-Api-Version: 2022-11-28" \
+              "https://api.github.com/search/repositories?q=pkg+user:RevoluNix"
+          )
+          PACKAGES_REPOSITROYS=$(
+            echo $QUERY_RESULT \
+              | jq -r .items.[].full_name
+          )
+
+          for REPOSITORY in "${PACKAGES_REPOSITROYS}"; do
+            gh pr create \
+              -R ${REPOSITORY} \
+              --head testing \
+              --base nightly \
+              --title "Switch testing chanel to nightly"
+            gh pr merge nightly \
+              -R ${REPOSITORY} \
+              -s \
+              --auto
+          done
