@@ -25,6 +25,7 @@ jobs:
               --base nightly \
               --title "Switch testing chanel to nightly" \
               --body ""
+            sleep 2
             gh pr merge testing \
               -R ${REPOSITORY} \
               -s \

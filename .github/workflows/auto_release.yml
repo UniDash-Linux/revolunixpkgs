@@ -25,6 +25,7 @@ jobs:
               --base main \
               --title "Switch nightly chanel to main" \
               --body ""
+            sleep 2
             gh pr merge nightly \
               -R ${REPOSITORY} \
               -s \
