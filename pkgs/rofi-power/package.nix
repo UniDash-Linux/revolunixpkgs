@@ -17,11 +17,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-power";
-  version = "release-2024.06.18-22.17.35";
+  version = "release-2024.06.25-23.32.17";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-power/releases/download/release-2024.06.18-22.17.35/src-rofi-power.tar.gz";
-    sha256 = "214f1b4fcc1d346b6620f92ceae5ea2e40c88c997101e773d28c5f1e9508bb7c";
+    url = "https://github.com/RevoluNix/pkg-rofi-power/releases/download/release-2024.06.25-23.32.17/src-rofi-power.tar.gz";
+    sha256 = "f2022e243269bf8d913d02bbee5c13fedd4fed6e1cd782b69a0dc70493401947";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
