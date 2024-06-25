@@ -8,10 +8,10 @@
 #######################################################################
 stdenv.mkDerivation (finalAttrs: {
   pname = "focus-rofi";
-  version = "release-2024.06.17-22.50.24";
+  version = "release-2024.06.25-23.31.18";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-focus-rofi/releases/download/release-2024.06.17-22.50.24/src-focus-rofi.tar.gz";
-    sha256 = "e749ab888be7379bc8091bf302cfb9c0e90fef33c676ad4066605cf860b9b2a9";
+    url = "https://github.com/RevoluNix/pkg-focus-rofi/releases/download/release-2024.06.25-23.31.18/src-focus-rofi.tar.gz";
+    sha256 = "c7717730fbfef322a9ef41a6581f97917f3a102f641214132e9d0c80acc77fbb";
   }; 
   # ----------------------------------------------------------------- #
   prePatch = ''
