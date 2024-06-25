@@ -17,10 +17,10 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-mixer";
-  version = "release-2024.06.18-22.06.17";
+  version = "release-2024.06.25-23.30.35";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/release-2024.06.18-22.06.17/src-rofi-mixer.tar.gz";
-    sha256 = "f8cfb2e378aa9d3773dd7de477de547dcebcd2b7e4002cd6e7386316d2cd3dc9";
+    url = "https://github.com/RevoluNix/pkg-rofi-mixer/releases/download/release-2024.06.25-23.30.35/src-rofi-mixer.tar.gz";
+    sha256 = "5fe58bc6311b4f478cd9e10f436afe8445b107ba38c6860afd3546a71c573537";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
@@ -50,11 +50,14 @@ stdenv.mkDerivation (finalAttrs: {
     runHook postInstall
   '';
   # ----------------------------------------------------------------- #
-  postFixup = ''
+  postFixup = let focus-rofi = fetchurl {
+    url = "https://github.com/RevoluNix/pkg-focus-rofi/releases/download/testing-2024.06.24-09.38.57/package.nix";
+    sha256 = "4360ca6c7ddd2e54126947a00aae82577bdbf74249256b42833bc7ec9c9be941";
+  }; in ''
     wrapProgram $out/bin/${finalAttrs.pname} \
       --prefix PATH : ${lib.makeBinPath [
         rofi-wayland
-        (callPackage ../focus-rofi/package.nix { })
+        (callPackage focus-rofi { })
       ]}
   '';
   # ----------------------------------------------------------------- #
