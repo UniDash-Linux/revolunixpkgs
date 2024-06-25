@@ -16,11 +16,11 @@ in
 # --------------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "exemple";
-  version = "release-2024.06.25-23.20.26";
+  version = "release-2024.06.25-23.28.37";
   ## ----------------------------------------------------------------- ##
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-template/releases/download/release-2024.06.25-23.20.26/src-template.tar.gz";
-    sha256 = "e92068260285ee31fa9bdcd5b939a57bb4cd9e38390a40107971d313965464a0";
+    url = "https://github.com/RevoluNix/pkg-template/releases/download/release-2024.06.25-23.28.37/src-template.tar.gz";
+    sha256 = "ba1b9a69d7f06a3b82ac8c04c73fae2a6173e094d372ea4d9e0881fe7f014b83";
   }; 
   ## ----------------------------------------------------------------- ##
   nativeBuildInputs = [ makeWrapper ];
