@@ -1,9 +1,13 @@
 {
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    virtual-machines = {
+      url = "github:RevoluNix/module-virtual-machines";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
-  outputs = inputs @ { self, nixpkgs }: let
+  outputs = inputs @ { self, nixpkgs, virtual-machines }: let
     defaultSystems = [
       "aarch64-linux"
       "aarch64-darwin"
@@ -16,7 +20,7 @@
       (system: function nixpkgs.legacyPackages.${system});
     in {
       nixosModules = rec {
-        virtualMachines = import ./modules/virtualMachines;
+        virtualMachines = virtual-machines.nixosModules.default;
         default = virtualMachines;
       };
 
