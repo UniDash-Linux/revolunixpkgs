@@ -6,6 +6,10 @@
       url = "github:RevoluNix/module-virtual-machines";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    revolunixos = {
+      url = "github:RevoluNix/module-system/develop";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -13,6 +17,7 @@
     nixpkgs,
     nixpkgs-unstable,
     virtual-machines,
+    revolunixos,
     ...
   }: let
     defaultSystems = [
@@ -45,10 +50,14 @@
         directory = ./pkgs;
       });
 
-    revoluNixModules =  nixpkgs.nixosModules // {
+    revoluNixModules = nixpkgs.nixosModules // {
       virtualMachines = virtual-machines.nixosModules.default;
     };
-    defaultModules = [];
+    configsImports = {
+      revolunixos = revolunixos.configsImports;
+    };
+    defaultModules = [
+    ];
 
     in nixpkgs // {
       revolunixpkgs = import nixpkgs (pkgs-settings // {
@@ -56,14 +65,11 @@
           (_: _: {
             nixpkgs = import nixpkgs pkgs-settings;
             unstable = import nixpkgs-unstable pkgs-settings;
-            nixosModules = revoluNixModules;
-            inherit defaultModules;
           })
           revoluNixOverlays
         ];
       }); 
-      unstable = nixpkgs-unstable;
       nixosModules = revoluNixModules;
-      inherit defaultModules;
+      inherit defaultModules configsImports;
     };
 }
