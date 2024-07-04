@@ -5,11 +5,11 @@
         "nixpkgs": "nixpkgs_2"
       },
       "locked": {
-        "lastModified": 1720045378,
-        "narHash": "sha256-lmE7B+QXw7lWdBu5GQlUABSpzPk3YBb9VbV+IYK5djk=",
+        "lastModified": 1720167120,
+        "narHash": "sha256-K9JYdlPiyaXp33JRg7CT8rMwH56e4ncXSsXW/YKnNXc=",
         "owner": "nix-community",
         "repo": "home-manager",
-        "rev": "0a30138c694ab3b048ac300794c2eb599dc40266",
+        "rev": "bbe6e94737289c8cb92d4d8f9199fbfe4f11c0ba",
         "type": "github"
       },
       "original": {
@@ -73,16 +73,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1720108368,
-        "narHash": "sha256-pnMGVEcEqr6mqrBwCW3l/rn/f8iqLm9ROsgtRioOiOI=",
+        "lastModified": 1720169841,
+        "narHash": "sha256-4Al6kw8elV4LywBi3NdxgA7XgUBHYIUepwX5hCD928w=",
         "owner": "RevoluNix",
         "repo": "module-system",
-        "rev": "c74c1e80cdb6dc7cb999faf14b82f4d6b420b512",
+        "rev": "138b5c1cd0b4ed50cdfd2f4f84fccaf75076a11b",
         "type": "github"
       },
       "original": {
         "owner": "RevoluNix",
-        "ref": "develop",
         "repo": "module-system",
         "type": "github"
       }

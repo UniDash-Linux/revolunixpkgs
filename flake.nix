@@ -7,7 +7,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     revolunixos = {
-      url = "github:RevoluNix/module-system/develop";
+      url = "github:RevoluNix/module-system";
       inputs.nixpkgs.follows = "nixpkgs";
     };
   };
