@@ -73,16 +73,16 @@
         ]
       },
       "locked": {
-        "lastModified": 1720129286,
+        "lastModified": 1720130122,
         "narHash": "sha256-SW8hcis4ogPZzFtSCIEBL+zqQ7zEBR4YwyDjn7q4aZY=",
         "owner": "RevoluNix",
         "repo": "module-system",
-        "rev": "21a5bf6d02701ebd2c29c5a8fb839c65e1fd955a",
+        "rev": "b470726359b3a35475a4573c9f4b8b9b22263f6c",
         "type": "github"
       },
       "original": {
         "owner": "RevoluNix",
-        "ref": "develop",
+        "ref": "nightly",
         "repo": "module-system",
         "type": "github"
       }
