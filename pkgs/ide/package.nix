@@ -12,6 +12,8 @@
   lazygit,
   wl-clipboard,
   nil,
+  neovim,
+  ...
 }:
 ############
 # Packages #
@@ -24,10 +26,10 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "ide";
-  version = "release-2024.06.25-23.29.15";
+  version = "release-2024.07.13-13.25.16";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.06.25-23.29.15/src-ide.tar.gz";
-    sha256 = "26c1d4386a0639610358a99189fa23a61db2aa1ef63b5b85c20b4a87769baab3";
+    url = "https://github.com/RevoluNix/pkg-ide/releases/download/release-2024.07.13-13.25.16/src-ide.tar.gz";
+    sha256 = "c4541b72f58959a836dc2c6496a74c1d9a17fa09b31775ace8c26fb188c7bdae";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
@@ -73,6 +75,7 @@ stdenv.mkDerivation (finalAttrs: {
         lazygit
         wl-clipboard
         nil
+        neovim
       ]}
   '';
   # ----------------------------------------------------------------- #
