@@ -4,7 +4,7 @@
   lib,
   makeWrapper,
   mpv,
-  youtube-dl,
+  yt-dlp,
   rofi-wayland,
 }:
 ############
@@ -18,11 +18,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-beats";
-  version = "release-2024.06.25-23.31.38";
+  version = "release-2024.07.13-13.07.28";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/release-2024.06.25-23.31.38/src-rofi-beats.tar.gz";
-    sha256 = "acb80a5f2138f0760c1a6c4be60b184109575b8f75ca01ca08fe17864647592f";
+    url = "https://github.com/RevoluNix/pkg-rofi-beats/releases/download/release-2024.07.13-13.07.28/src-rofi-beats.tar.gz";
+    sha256 = "9a4d357e7e40be594dd6b74753e35dc47cdbbe5312cb087c3f00ccf8dcb87df3";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
@@ -61,7 +61,7 @@ stdenv.mkDerivation (finalAttrs: {
     wrapProgram $out/bin/play-music \
       --prefix PATH : ${lib.makeBinPath [
         mpv
-        youtube-dl
+        yt-dlp
         rofi-wayland
       ]}
   '';
