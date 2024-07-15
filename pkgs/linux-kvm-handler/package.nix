@@ -1,11 +1,15 @@
 {
   fetchurl,
+  lib,
+  buildLinux,
+  ...
+} @ args:
 
 let
-  version = "release-2024.07.15-13.28.43";
+  version = "6.5";
   src = fetchurl {
-    url = "https://github.com/RevoluNix/pkg-linux-kvm-handler/releases/download/release-2024.07.15-13.28.43/src-linux-kvm-handler.tar.gz";
-    sha256 = "fc256583efa01b85a1ef55dd704d0809b05cd6dc4daf7f1ba4f742deb9f361f2";
+    url = "https://github.com/RevoluNix/pkg-linux-kvm-handler/releases/download/release-2024.07.15-13.41.11/src-linux-kvm-handler.tar.gz";
+    sha256 = "647469250aa9e3ea7eb4f26c53d155da86be7196f5e2a1f3f208fd4e1a3e4f4f";
   };
 
   args' = (builtins.removeAttrs args ["branch"]) // {
