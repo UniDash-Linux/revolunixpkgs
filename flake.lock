@@ -57,11 +57,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1720872451,
-        "narHash": "sha256-ybcGbwKpzHTIPjzFtSH2QLc4C5ccvrF3PmVh+hbJ37E=",
+        "lastModified": 1722182152,
+        "narHash": "sha256-DZe2mBhBYSXxdfwt2rA3DS4QLkCoqIcUoePxAJS5f7I=",
         "owner": "RevoluNix",
         "repo": "module-system",
-        "rev": "4438be3717e93a058bda04a2e47995a1cf8ad918",
+        "rev": "aa8afdf33081d440c8c9a6f9d8001da09c9ad561",
         "type": "github"
       },
       "original": {
