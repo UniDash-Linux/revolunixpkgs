@@ -1,4 +1,7 @@
 {
+###########
+# Imports #
+#######################################################################
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
@@ -10,6 +13,10 @@
       url = "github:RevoluNix/module-system";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    home-manager = {
+      url = "github:nix-community/home-manager/release-24.05";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
   };
 
   outputs = inputs @ {
@@ -18,8 +25,13 @@
     unstable,
     virtual-machines,
     revolunixos,
+    home-manager,
     ...
   }: let
+
+#############
+# Variables #
+#######################################################################
     defaultSystems = [
       "aarch64-linux"
       "aarch64-darwin"
@@ -28,50 +40,61 @@
     ];
 
     system = "x86_64-linux";
-    pkgs-settings = {
+    pkgsSettings = {
       inherit system;
       config.allowUnfree = true;
     };
 
+#############
+# Functions #
+#######################################################################
     forAllSystems = function:
       nixpkgs.lib.genAttrs defaultSystems
       (system: function nixpkgs.legacyPackages.${system});
 
     packages = forAllSystems (pkgs:
-      let
-        scope = pkgs.lib.makeScope
-          pkgs.newScope (self: { inherit inputs; });
-      in
-      pkgs.lib.filesystem.packagesFromDirectoryRecursive {
+      let scope = pkgs.lib.makeScope
+        pkgs.newScope (self: { inherit inputs; });
+
+      in pkgs.lib.filesystem.packagesFromDirectoryRecursive {
         inherit (scope) callPackage;
         directory = ./pkgs;
       });
 
-    revoluNixOverlays = (final: prev:
-      (packages."${system}"));
+    appendPkgsWithPkgs = new-element-path: imports-object:
+      imports-object.pkgs // { "${baseNameOf new-element-path}" =
+        (import new-element-path imports-object);};
 
-    nixosModules = nixpkgs.nixosModules // {
-      virtualMachines = virtual-machines.nixosModules.default;
-    };
-    configsImports = {
-      revolunixos = revolunixos.configsImports;
-    };
-    defaultModules = [
-    ];
-
-    in import nixpkgs (pkgs-settings // {
-      overlays = [
-        (_: _: {
-          purepkgs = nixpkgs;
-          unstable = import unstable pkgs-settings;
-
-          inherit 
-            defaultModules
-            configsImports
-            nixosModules
-          ;
-        })
-        revoluNixOverlays
+###########
+# Overlay #
+#######################################################################
+    overlayContents = {
+      nixosModules = nixpkgs.nixosModules // {
+        virtualMachines = virtual-machines.nixosModules.default;
+        home-manager = home-manager.nixosModules.home-manager;
+      };
+      configsImports = {
+        revolunixos = revolunixos.configsImports;
+      };
+      defaultModules = [
       ];
+
+      unstable = import unstable pkgsSettings;
+      purepkgs = nixpkgs;
+    };
+
+    revoluNixOverlays = [
+        (_: _: (packages."${system}"))
+        (_: _: overlayContents)
+      ];
+
+    revoluNixPkgs = import nixpkgs (pkgsSettings // {
+      overlays = revoluNixOverlays;
     });
+
+###########
+# Outputs #
+#######################################################################
+    in revoluNixPkgs;
+#######################################################################
 }
