@@ -10,7 +10,7 @@
       inputs.nixpkgs.follows = "nixpkgs";
     };
     revolunixos = {
-      url = "github:RevoluNix/module-system";
+      url = "github:RevoluNix/module-system/hyprwal/switch_to_pywal_template";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
