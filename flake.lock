@@ -180,16 +180,15 @@
         ]
       },
       "locked": {
-        "lastModified": 1729267548,
-        "narHash": "sha256-MD+Z4Dh0cnXhRGip2FXdrgut0V6HDmgd611E4KWlTIM=",
+        "lastModified": 1722182152,
+        "narHash": "sha256-DZe2mBhBYSXxdfwt2rA3DS4QLkCoqIcUoePxAJS5f7I=",
         "owner": "RevoluNix",
         "repo": "module-system",
-        "rev": "25d5a8b2eb45acac98f0343d34c66e35a4dc3561",
+        "rev": "aa8afdf33081d440c8c9a6f9d8001da09c9ad561",
         "type": "github"
       },
       "original": {
         "owner": "RevoluNix",
-        "ref": "hyprwal/switch_to_pywal_template",
         "repo": "module-system",
         "type": "github"
       }
