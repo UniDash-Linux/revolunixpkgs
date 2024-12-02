@@ -3,23 +3,23 @@
 # Imports #
 #######################################################################
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.05";
+    nixpkgs.url = "github:NixOS/nixpkgs/nixos-24.11";
     unstable.url = "github:NixOS/nixpkgs/nixos-unstable";
     virtual-machines = {
-      url = "github:RevoluNix/module-virtual-machines";
+      url = "github:RevoluNix/module-virtual-machines/update_to_24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     revolunixos = {
-      url = "github:RevoluNix/module-system/hyprwal/switch_to_pywal_template";
+      url = "github:RevoluNix/module-system/update_to_2411";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     home-manager = {
-      url = "github:nix-community/home-manager/release-24.05";
+      url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    proxmox-nixos = {
-      url = "github:RevoluNix/proxmox-nixos";
-    };
+    # proxmox-nixos = {
+    #   url = "github:RevoluNix/proxmox-nixos";
+    # };
   };
 
   outputs = inputs @ {
@@ -29,7 +29,7 @@
     virtual-machines,
     revolunixos,
     home-manager,
-    proxmox-nixos,
+    # proxmox-nixos,
     ...
   }: let
 
@@ -76,7 +76,7 @@
       nixosModules = nixpkgs.nixosModules // {
         virtualMachines = virtual-machines.nixosModules.default;
         home-manager = home-manager.nixosModules.home-manager;
-        proxmox-nixos = proxmox-nixos.nixosModules.proxmox-ve;
+        # proxmox-nixos = proxmox-nixos.nixosModules.proxmox-ve;
       };
 
       configsImports = {
@@ -92,25 +92,25 @@
       stable = import nixpkgs pkgsSettings; 
       purepkgs = nixpkgs;
 
-      inherit proxmoxPkgs;
+      # inherit proxmoxPkgs;
     };
 
 
-    proxmoxOverlays = [
-      (_: _: (packages."${system}"))
-      (_: _: overlayPkgs)
-      (self: super: {
-        # src: https://github.com/NixOS/nixpkgs/commit/7e94ac48e0c68bdc9d2b39e50e024e7170f83838
-        # issue/PR: https://github.com/NixOS/nixpkgs/pull/325059
-        ceph = super.ceph.overrideAttrs {
-          postPatch = ''
-            substituteInPlace cmake/modules/Finduring.cmake \
-              --replace-fail "liburing.a liburing" "uring"
-          '';
-        };
-      })
-      proxmox-nixos.overlays.${system}
-    ];
+    # proxmoxOverlays = [
+    #   (_: _: (packages."${system}"))
+    #   (_: _: overlayPkgs)
+    #   (self: super: {
+    #     # src: https://github.com/NixOS/nixpkgs/commit/7e94ac48e0c68bdc9d2b39e50e024e7170f83838
+    #     # issue/PR: https://github.com/NixOS/nixpkgs/pull/325059
+    #     ceph = super.ceph.overrideAttrs {
+    #       postPatch = ''
+    #         substituteInPlace cmake/modules/Finduring.cmake \
+    #           --replace-fail "liburing.a liburing" "uring"
+    #       '';
+    #     };
+    #   })
+    #   proxmox-nixos.overlays.${system}
+    # ];
 
     revoluNixOverlays = [
       (_: _: (packages."${system}"))
@@ -118,9 +118,9 @@
       (_: _: overlayPkgs)
     ];
 
-    proxmoxPkgs = import nixpkgs (pkgsSettings // {
-      overlays = proxmoxOverlays;
-    });
+    # proxmoxPkgs = import nixpkgs (pkgsSettings // {
+    #   overlays = proxmoxOverlays;
+    # });
 
     revoluNixPkgs = import nixpkgs (pkgsSettings // {
       overlays = revoluNixOverlays;
