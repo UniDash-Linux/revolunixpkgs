@@ -4,7 +4,7 @@
   lib,
   makeWrapper,
   rofi-wayland,
-  freerdp3,
+  freerdp,
 }:
 ############
 # Packages #
@@ -17,11 +17,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-vm";
-  version = "release-2024.11.26-21.32.58";
+  version = "release-2024.12.06-20.27.58";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/UniDash-Linux/pkg-rofi-vm/releases/download/release-2024.11.26-21.32.58/src-rofi-vm.tar.gz";
-    sha256 = "64d3be6aa1b186d126c88cec7a531f790ba594987669e5c125735e02899369c5";
+    url = "https://github.com/UniDash-Linux/pkg-rofi-vm/releases/download/release-2024.12.06-20.27.58/src-rofi-vm.tar.gz";
+    sha256 = "3c62435bea442abba40a8ce3d6ffc79cfae3bb2c39adeb2d623c63f6aba99675";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
@@ -54,7 +54,7 @@ stdenv.mkDerivation (finalAttrs: {
   # ----------------------------------------------------------------- #
   postFixup = ''
     wrapProgram $out/bin/${finalAttrs.pname} \
-      --prefix PATH : ${lib.makeBinPath [ rofi-wayland freerdp3 ]}
+      --prefix PATH : ${lib.makeBinPath [ rofi-wayland freerdp ]}
   '';
   # ----------------------------------------------------------------- #
   meta = {
