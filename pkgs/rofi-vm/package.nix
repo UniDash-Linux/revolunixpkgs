@@ -17,11 +17,11 @@ in
 # ----------------------------------------------------------------- #
 stdenv.mkDerivation (finalAttrs: {
   pname = "rofi-vm";
-  version = "release-2024.12.06-20.27.58";
+  version = "release-2024.12.06-21.24.14";
   # ----------------------------------------------------------------- #
   src = fetchurl {
-    url = "https://github.com/UniDash-Linux/pkg-rofi-vm/releases/download/release-2024.12.06-20.27.58/src-rofi-vm.tar.gz";
-    sha256 = "3c62435bea442abba40a8ce3d6ffc79cfae3bb2c39adeb2d623c63f6aba99675";
+    url = "https://github.com/UniDash-Linux/pkg-rofi-vm/releases/download/release-2024.12.06-21.24.14/src-rofi-vm.tar.gz";
+    sha256 = "0f7efa3d38c22bc2f7fb6b92145e15f00afe79301442b282de6d26d5397a436b";
   }; 
   # ----------------------------------------------------------------- #
   nativeBuildInputs = [ makeWrapper ];
