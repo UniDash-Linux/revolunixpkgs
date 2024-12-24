@@ -17,6 +17,9 @@
       url = "github:nix-community/home-manager/release-24.11";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    hyprland = {
+      url = "github:hyprwm/Hyprland";
+    };
     proxmox-nixos = {
       url = "github:SaumonNet/proxmox-nixos";
     };
@@ -26,6 +29,7 @@
     self,
     nixpkgs,
     unstable,
+    hyprland,
     virtual-machines,
     revolunixos,
     home-manager,
@@ -95,6 +99,7 @@
 
     revoluNixOverlays = [
       (_: _: (packages."${system}"))
+      (_: _: (hyprland.packages."${system}"))
       (_: _: overlayModules)
       (_: _: overlayPkgs)
       proxmox-nixos.overlays.${system}
